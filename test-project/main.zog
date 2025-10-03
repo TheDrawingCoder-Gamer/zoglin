@@ -1,9 +1,7 @@
 namespace example
 
 fn load() {
-  while a {
-    if b {
-      return 10
-    }
+  if a == 10 {
+    say hi
   }
 }

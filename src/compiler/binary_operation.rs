@@ -478,6 +478,7 @@ impl Compiler {
     let right = self.compile_expression(*binary_operation.right, context, false)?;
     let needs_macro = left.needs_macro || right.needs_macro;
 
+    // true at comptime
     if let Some(equal) = left.equal(&right) {
       return Ok(Expression::new(
         ExpressionKind::Boolean(equal),
@@ -496,6 +497,20 @@ impl Compiler {
         true,
         &context.location.namespace,
       ),
+      (num, _) if num.numeric_value().is_some() => {
+        self.compile_match_comparison(
+          &mut context.code, 
+          right,
+          num.numeric_value().expect("Numeric value exists").to_eco_string(),
+          &context.location.namespace)
+      }
+      (_, num) if num.numeric_value().is_some() => {
+        self.compile_match_comparison(
+          &mut context.code, 
+          left,
+          num.numeric_value().expect("Numeric value exists").to_eco_string(),
+          &context.location.namespace)
+      }
       (left_kind, right_kind)
         if left_kind.to_type().is_numeric() && right_kind.to_type().is_numeric() =>
       {

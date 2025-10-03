@@ -49,9 +49,17 @@ impl Parser {
         }
 
         TokenKind::ForwardSlash => {
-          resource.modules.push(identifier);
-          allow_colon = false;
           self.consume();
+          
+          
+          if kind == NameKind::ScoreboardVariable && self.current().kind == TokenKind::LeftSquare {
+            // exit out and let caller handle it
+            resource.name = identifier;
+            done = true;
+          } else {
+            resource.modules.push(identifier);
+            allow_colon = false;
+          }
         }
 
         _ => {

@@ -913,7 +913,11 @@ impl Compiler {
             eco_format!("The compile-time variable {name} is not in scope."),
           ))
         }
-      }
+      },
+      StaticExpr::ScoreboardVariable(resource) => Ok((
+        ScoreboardLocation::from_zoglin_resource(&context.location, &resource).to_eco_string(),
+        false
+      )),
 
       StaticExpr::ResourceRef { resource } => Ok((
         ResourceLocation::from_zoglin_resource(&context.location.clone().module(), &resource)

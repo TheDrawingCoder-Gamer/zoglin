@@ -121,6 +121,7 @@ pub enum CommandPart {
 #[derive(Debug, Clone)]
 pub enum StaticExpr {
   MacroVariable(EcoString),
+  ScoreboardVariable(ZoglinResource),
   ComptimeVariable(EcoString),
   FunctionCall(FunctionCall),
   ResourceRef { resource: ZoglinResource },

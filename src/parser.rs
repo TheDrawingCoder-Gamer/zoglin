@@ -658,6 +658,12 @@ impl Parser {
   }
 
   fn parse_scoreboard_variable(&mut self) -> Result<Expression> {
+    let resource = self.parse_scoreboard_variable_resource()?;
+
+    Ok(Expression::ScoreboardVariable(resource))
+  }
+
+  fn parse_scoreboard_variable_resource(&mut self) -> Result<ZoglinResource> {
     self.expect(TokenKind::Dollar)?;
 
     let mut resource: ZoglinResource;
@@ -682,7 +688,7 @@ impl Parser {
       }
     }
 
-    Ok(Expression::ScoreboardVariable(resource))
+    return Ok(resource);
   }
 
   fn parse_scoreboard_variable_name(&mut self) -> Result<EcoString> {
@@ -713,6 +719,10 @@ impl Parser {
         let name = self.expect(TokenKind::Identifier)?;
         validate(name.get_value(), &name.location, NameKind::MacroVariable)?;
         Ok(StaticExpr::MacroVariable(name.get_value().clone()))
+      },
+      TokenKind::Dollar => {
+        let resource = self.parse_scoreboard_variable_resource()?;
+        Ok(StaticExpr::ScoreboardVariable(resource))
       }
       TokenKind::Ampersand => match self.parse_comptime_variable()? {
         Expression::FunctionCall(call) => Ok(StaticExpr::FunctionCall(call)),
